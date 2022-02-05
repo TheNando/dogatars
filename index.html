@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+
+  <title>Rando Doggos</title>
+
+  <style>
+    .center {
+      position: absolute;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <img class="center" height="400" alt="background">
+    <img class="center" height="400" alt="hat">
+    <img class="center" height="400" alt="body">
+    <img class="center" height="400" alt="eyes">
+    <img class="center" height="400" alt="mouth">
+    <img class="center" height="400" alt="card">
+    <img class="center" height="400" src="./images/hand.png" alt="hand">
+    <img class="center" height="400" alt="glove">
+  </div>
+
+  <script>
+    Object.entries({
+      background: 6,
+      body: 12,
+      card: 3,
+      eyes: 15,
+      glove: 13,
+      hat: 17,
+      mouth: 12,
+      shirt: 16,
+    }).forEach(([key, max]) => {
+      const num = Math.trunc(Math.random() * max)
+      const img = document.querySelector(`[alt="${key}"]`)
+      img.src = `./images/${key}_${num}.png`
+    })
+  </script>
+</body>
+</html>
