@@ -1,57 +1,134 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
+
 <head>
   <meta charset="UTF-8">
 
   <title>Rando Doggos</title>
 
   <style>
-    body, html {
+    body,
+    html {
       height: 100vh;
       margin: 0;
+    }
 
+    button {
+      border-radius: 20px;
+      border: none;
+      font-size: 30pt;
+      padding: 15px 18px;
+      position: absolute;
+      top: 20px;
+    }
+
+    .background {
+      background-repeat: repeat;
     }
 
     .center {
-      position: absolute;
-      height: 100vh;
-      width: 100vw;
       background-position: center;
       background-repeat: no-repeat;
       background-size: contain;
+      height: 100%;
+      position: absolute;
+      width: 100%;
+    }
+
+    .success {
+      color: forestgreen;
+    }
+
+    .success-black {
+      color: initial;
+      transition: color 3s ease-in;
+    }
+
+    .left {
+      left: 20px;
+    }
+
+    .right {
+      right: 20px;
     }
   </style>
 </head>
 
-<body>
+<body class="background" alt="background">
+  <div class="center" alt="hat"></div>
+  <div class="center" alt="body"></div>
+  <div class="center" alt="shirt"></div>
+  <div class="center" alt="eyes"></div>
+  <div class="center" alt="mouth"></div>
+  <div class="center" alt="card"></div>
+  <div class="center" alt="hand"></div>
+  <div class="center" alt="glove"></div>
+
   <div>
-    <div class="center" alt="background"></div>
-    <div class="center" alt="hat"></div>
-    <div class="center" alt="body"></div>
-    <div class="center" alt="shirt"></div>
-    <div class="center" alt="eyes"></div>
-    <div class="center" alt="mouth"></div>
-    <div class="center" alt="card"></div>
-    <div class="center" alt="hand"></div>
-    <div class="center" alt="glove"></div>
+    <button class="left" onclick="shareUrl()">share</button>
+    <button class="right" onclick="generateDog()">generate</button>
   </div>
 
   <script>
-    Object.entries({
+    const alphaStart = 97
+    const parts = Object.entries({
       background: 6,
-      hat: 17,
       body: 12,
-      shirt: 16,
-      eyes: 15,
-      mouth: 12,
       card: 3,
-      hand: 1,
+      eyes: 15,
       glove: 13,
-    }).forEach(([key, max]) => {
-      const num = Math.trunc(Math.random() * max)
-      const img = document.querySelector(`[alt="${key}"]`)
-      img.style.backgroundImage = `url('./images/${key}_${num}.png')`
+      hand: 1,
+      hat: 17,
+      mouth: 12,
+      shirt: 16,
     })
+
+    const rand = new Uint8Array(parts.length)
+
+    function applyHash(hash) {
+      [...hash].forEach((char, i) => {
+        const key = parts[i][0]
+        const variant = char.charCodeAt(0) - alphaStart
+        const img = document.querySelector(`[alt="${key}"]`)
+        img.style.backgroundImage = `url('./images/${key}_${variant}.png')`
+      })
+    }
+
+    function shareUrl() {
+      navigator.clipboard.writeText(window.location.href)
+      const button = document.querySelector('button.left')
+      button.textContent = 'url copied!'
+      button.className = 'left success'
+
+      setTimeout(() => button.className = 'left success-black', 10)
+      setTimeout(() => button.textContent = 'share', 3000)
+    }
+
+    function generateDog() {
+      crypto.getRandomValues(rand)
+      const hash = parts
+        .map(([k, max], i) => String.fromCharCode(alphaStart + (rand[i] % max)))
+        .join('')
+
+      applyHash(hash)
+      updateUrl(hash)
+    }
+
+    function updateUrl(hash) {
+      const url = new URL(window.location);
+      url.searchParams.set('d', hash);
+      window.history.pushState({}, '', url)
+    }
+
+    const hash = new URLSearchParams(location.search).get("d")
+
+    if (hash) {
+      applyHash(hash)
+    } else {
+      generateDog()
+    }
+
   </script>
 </body>
+
 </html>
